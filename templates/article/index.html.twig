@@ -1,20 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ArticleController!{% endblock %}
+{% block title %}Liste des articles
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/laragon/www/articles/src/Controller/ArticleController.php'|file_link(0) }}">src/Controller/ArticleController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/laragon/www/articles/templates/article/index.html.twig'|file_link(0) }}">templates/article/index.html.twig</a></code></li>
-    </ul>
-</div>
+	<div class="container">
+		<div class="d-flex justify-content-between mt-2 mb-2">
+			<h1>Listes des Articles</h1>
+			<a href="{{ path('add_article') }}">Ajouter</a>
+		</div>
+		<div class="row">
+			{% for article in articles %}
+				<div class="col-md-4 mb-4">
+					<div class="card h-100">
+						<div class="card-body">
+							<h5 class="card-title">{{ article.title }}</h5>
+							<p class="card-text">
+								{{ article.body|slice(1,100) }}
+								{% if article.body|length > 100 %}
+									...
+								{% endif %}
+							</p>
+							<div class="d-flex justify-content-between">
+								<a href="{{ path('edit_article', {id_article: article.id}) }}" class="btn btn-primary">Modifier</a>
+								<a href="{{ path('view_article', {id_article: article.id}) }}" class="btn btn-info">Voir</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 {% endblock %}
