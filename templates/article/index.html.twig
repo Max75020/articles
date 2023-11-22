@@ -16,7 +16,7 @@
 						<div class="card-body">
 							<h5 class="card-title">{{ article.title }}</h5>
 							<p class="card-text">
-								{{ article.body|slice(1,100) }}
+								{{ article.body|slice(1,100)|raw }}
 								{% if article.body|length > 100 %}
 									...
 								{% endif %}

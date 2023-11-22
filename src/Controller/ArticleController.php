@@ -5,12 +5,14 @@ namespace App\Controller;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Article;
+use App\Form\ArticleType;
 
 class ArticleController extends AbstractController
 {
-	#[Route('/', name: 'app_articles')]
+	#[Route('/', name: 'list_articles')]
 	public function index(ManagerRegistry $doctrine): Response
 	{
 
@@ -37,26 +39,39 @@ class ArticleController extends AbstractController
 	}
 
 	#[Route('/view-article/{id_article}', name: 'view_article')]
-	public function viewArticle(ManagerRegistry $doctrine): Response
+	public function viewArticle($id_article,ManagerRegistry $doctrine): Response
 	{
 
 		$em = $doctrine->getManager();
 
-		$articles = $em->getRepository(Article::class)->findAll();
+		$article = $em->getRepository(Article::class)->find($id_article);
 
-		return $this->render('article/index.html.twig', [
-			'articles' => $articles,
+		return $this->render('article/viewArticle.html.twig', [
+			'article' => $article,
 		]);
 	}
-	#[Route('/view-article/add', name: 'add_article')]
-	public function addArticle(ManagerRegistry $doctrine): Response
+
+	#[Route('/article-add', name: 'add_article')]
+	public function addArticle(Request $request,ManagerRegistry $doctrine): Response
 	{
 		$em = $doctrine->getManager();
 
-		$articles = $em->getRepository(Article::class)->findAll();
+		$article = new Article();
+		$form = $this->createForm(ArticleType::class, $article);
 
-		return $this->render('article/index.html.twig', [
-			'articles' => $articles,
+		$form->handleRequest($request);
+		
+		if($form->isSubmitted() && $form->isValid()){
+			$article = $form->getData();
+
+			$article->setBody(nl2br($article->getBody()));
+
+			$em->persist($article);
+			$em->flush();
+			return $this->redirectToRoute('list_articles');
+		}
+		return $this->render('article/addArticle.html.twig', [
+			'form' => $form->createView(),
 		]);
 	}
 }

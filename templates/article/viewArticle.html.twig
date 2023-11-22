@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ article.title }}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h3 class="mb-4 font-italic border-bottom text-border text-center">{{ article.title }}</h3>
+			<a href="{{ path('list_articles') }}" class="btn btn-light">Listes des Articles</a>
+		</div>
+		<p>
+			{{ article.body|raw }}
+		</p>
+	</div>
+{% endblock %}
+
