@@ -108,4 +108,23 @@ class ArticleController extends AbstractController
 			'form' => $form->createView(),
 		]);
 	}
+
+	#[Route('/delete-article/{id_article}', name: 'delete_article')]
+	public function deleteArticle($id_article, ManagerRegistry $doctrine, Request $request): Response
+	{
+		// Doctrine gère grace à des fonction les données en BDD
+		$em = $doctrine->getManager();
+		// Récupération de l'article en BDD via son id
+		$article = $em->getRepository(Article::class)->find($id_article);
+
+		// Suppresion en BDD
+		$em->remove($article);
+		$em->flush();
+
+		$session = $request->getSession();
+		$session->set('notification', "Article supprimé avec succès");
+		$session->set('type_notif', "alert-success");
+
+		return $this->redirectToRoute('list_articles');
+	}
 }

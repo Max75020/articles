@@ -29,6 +29,7 @@
 							</p>
 							<div class="d-flex justify-content-between">
 								<a href="{{ path('edit_article', {id_article: article.id}) }}" class="btn btn-primary">Modifier</a>
+								<a href="{{ path('delete_article', {id_article: article.id}) }}" class="btn btn-danger">Supprimer</a>
 								<a href="{{ path('view_article', {id_article: article.id}) }}" class="btn btn-info">Voir</a>
 							</div>
 						</div>
