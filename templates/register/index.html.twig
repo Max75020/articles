@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire d'inscription
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<div class="row">
+			<div class="col-md-8 offset-md-2">
+				<h1 class="text-center mb-4">Formulaire d'inscription</h1>
+				<div class="bg-white p-4 rounded">
+					{{ form_start(form) }}
+					{{ form_widget(form) }}
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
