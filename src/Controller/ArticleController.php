@@ -32,15 +32,35 @@ class ArticleController extends AbstractController
 	}
 
 	#[Route('/edit-article/{id_article}', name: 'edit_article')]
-	public function editArticle(ManagerRegistry $doctrine): Response
+	public function editArticle($id_article, ManagerRegistry $doctrine, Request $request): Response
 	{
 
 		$em = $doctrine->getManager();
 
-		$articles = $em->getRepository(Article::class)->findAll();
+		$article = $em->getRepository(Article::class)->find($id_article);
+		if ($article === null) {
+			return $this->redirectToRoute('list_articles');
+		}
+		$form = $this->createForm(ArticleType::class, $article);
 
-		return $this->render('article/index.html.twig', [
-			'articles' => $articles,
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+			$article = $form->getData();
+
+			$article->setBody(nl2br($article->getBody()));
+
+			$em->flush();
+
+			$session = $request->getSession();
+			$session->set('notification', "Article modifié avec succès");
+			$session->set('type_notif', "alert-success");
+
+			return $this->redirectToRoute('list_articles');
+		}
+
+		return $this->render('article/editArticle.html.twig', [
+			'form' => $form->createView(),
 		]);
 	}
 
@@ -51,6 +71,9 @@ class ArticleController extends AbstractController
 		$em = $doctrine->getManager();
 
 		$article = $em->getRepository(Article::class)->find($id_article);
+		if ($article === null) {
+			return $this->redirectToRoute('list_articles');
+		}
 
 		return $this->render('article/viewArticle.html.twig', [
 			'article' => $article,
