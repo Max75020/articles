@@ -4,6 +4,12 @@
 {% endblock %}
 
 {% block body %}
+	{% if notification is not null %}
+		<div class="alert {{type_notif}}">
+			{{notification}}
+		</div>
+	{% endif %}
+	{{app.session.set('notification',null)}}
 	<div class="container">
 		<div class="d-flex justify-content-between mt-2 mb-2">
 			<h1>Listes des Articles</h1>
@@ -32,3 +38,4 @@
 		</div>
 	</div>
 {% endblock %}
+
