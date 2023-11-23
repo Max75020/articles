@@ -42,13 +42,18 @@ class ArticleType extends AbstractType
 					'class' => 'form-control'
 				]
 			])
-			->add('submit',SubmitType::class,[
+			->add('submit', SubmitType::class, [
 				'label' => 'Valider',
 				'attr' => [
 					'class' => 'btn btn-primary'
 				]
-				])
-			;
+			])
+			->add('delete', SubmitType::class, [
+				'label' => 'Supprimer',
+				'attr' => [
+					'class' => 'btn btn-danger'
+				]
+			]);
 	}
 
 	public function configureOptions(OptionsResolver $resolver): void

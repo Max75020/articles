@@ -46,18 +46,29 @@ class ArticleController extends AbstractController
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-			$article = $form->getData();
-
-			$article->setBody(nl2br($article->getBody()));
-
-			$em->flush();
-
-			$session = $request->getSession();
-			$session->set('notification', "Article modifié avec succès");
-			$session->set('type_notif', "alert-success");
-
-			return $this->redirectToRoute('list_articles');
+			if ($form->get('submit')->isClicked()) {
+				// Le bouton Valider a été cliqué
+				$article->setBody(nl2br($article->getBody()));
+				$em->flush();
+		
+				$session = $request->getSession();
+				$session->set('notification', "Article modifié avec succès");
+				$session->set('type_notif', "alert-success");
+		
+				return $this->redirectToRoute('list_articles');
+			} elseif ($form->get('delete')->isClicked()) {
+				// Le bouton Supprimer a été cliqué
+				$em->remove($article);
+				$em->flush();
+		
+				$session = $request->getSession();
+				$session->set('notification', "Article supprimé avec succès");
+				$session->set('type_notif', "alert-success");
+		
+				return $this->redirectToRoute('list_articles');
+			}
 		}
+		
 
 		return $this->render('article/editArticle.html.twig', [
 			'form' => $form->createView(),
