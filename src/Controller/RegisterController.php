@@ -9,11 +9,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\User;
 use App\Form\RegisterType;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegisterController extends AbstractController
 {
 	#[Route('/register', name: 'app_register')]
-	public function index(ManagerRegistry $doctrine, Request $request): Response
+	public function index(ManagerRegistry $doctrine, Request $request, UserPasswordHasherInterface $passwordHasher): Response
 	{
 		$em = $doctrine->getManager();
 
@@ -22,17 +23,24 @@ class RegisterController extends AbstractController
 
 		$form->handleRequest($request);
 
-		if ($form->isSubmitted() && $form->isValid()) {
-			$user = $form->getData();
+		if($form->isSubmitted() && $form->isValid()){
+            $user = $form->getData();
 
-			$em->persist($user);
-			$em->flush();
+            $hashedPassword = $passwordHasher->hashPassword(
+                $user,
+                $user->getPassword()
+            );
+            $user->setPassword($hashedPassword);
 
-			$session = $request->getSession();
-			$session->set('notification', "user ajouté avec succès");
-			$session->set('type_notif', "alert-success");
+            $em->persist($user);
+            $em->flush();
 
-		}
+            $session = $request->getSession();
+            $session->set('notification', "Utilisateur crée avec succès");
+            $session->set('type_notif', "alert-success");
+
+            return $this->redirectToRoute('list_articles');
+        }
 		return $this->render('register/index.html.twig', [
 			'form' => $form->createView(),
 		]);
